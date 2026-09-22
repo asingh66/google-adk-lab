@@ -5,10 +5,10 @@ def get_customer(customer_id: str) -> dict:
     """Get customer information.
 
     Args:
-        customer_id: Unique identifier of the customer.
+        customer_id: Unique identifier of the customer
 
     Returns:
-        Information about the requested customer.
+        Information about the requested customer, including the status.
     """
 
     customer = find_customer(customer_id)
