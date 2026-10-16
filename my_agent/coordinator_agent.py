@@ -6,7 +6,7 @@ from .diagnosis_agent import diagnosis_agent
 from .remediation_agent import remediation_agent
 
 
-ccoordinator_agent = Agent(
+coordinator_agent = Agent(
     name="coordinator_agent",
     model="gemini-2.5-flash",
     mode="chat",
@@ -27,9 +27,9 @@ or approves a remediation action such as retrying a pipeline.
 
 Do not perform pipeline operations yourself.
 """,
-    sub_agents=[       
+    sub_agents=[
+        status_agent,
         investigation_workflow,
         remediation_agent,
-        1
     ],
 )

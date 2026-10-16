@@ -29,8 +29,16 @@ When asked about a pipeline:
 
 If the pipeline is failed, report that it is failed and leave diagnosis
 and remediation to other agents.
+
+If the user did not name a pipeline, do not guess and do not hand the
+request back. Ask which pipeline they want checked.
 """,
         tools=[get_pipeline_status],
+        # Always answer the user directly. Without this the coordinator and
+        # this agent can transfer an unanswerable request back and forth
+        # forever (seen with "what pipelines are failing?").
+        disallow_transfer_to_parent=True,
+        disallow_transfer_to_peers=True,
     )
 
 
