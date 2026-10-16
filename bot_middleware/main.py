@@ -17,6 +17,7 @@ from microsoft_agents.hosting.core import (
 )
 from microsoft_agents.hosting.fastapi import (
     CloudAdapter,
+    jwt_authorization_decorator,
     start_agent_process,
 )
 
@@ -80,6 +81,13 @@ agent_app = AgentApplication[TurnState](
     adapter=adapter,
     authorization=authorization,
     **agents_sdk_config
+)
+
+
+# The inbound JWT check reads its config from app.state.
+# Without this it cannot validate tokens and returns 500.
+app.state.agent_configuration = (
+    connection_manager.get_default_connection_configuration()
 )
 
 
@@ -275,6 +283,7 @@ async def on_message(
 # ---------------------------------------------------------
 
 @app.post("/api/messages")
+@jwt_authorization_decorator
 async def messages(request: Request):
 
     return await start_agent_process(
