@@ -2,12 +2,14 @@ from google.adk.agents import Agent
 
 from .investigation_workflow import investigation_workflow
 from .status_agent import status_agent
+from .diagnosis_agent import diagnosis_agent
 from .remediation_agent import remediation_agent
 
 
-coordinator_agent = Agent(
+ccoordinator_agent = Agent(
     name="coordinator_agent",
     model="gemini-2.5-flash",
+    mode="chat",
     description="Coordinates pipeline monitoring, investigation, and remediation.",
     instruction="""
 You are the coordinator for pipeline operations.
@@ -25,9 +27,9 @@ or approves a remediation action such as retrying a pipeline.
 
 Do not perform pipeline operations yourself.
 """,
-    sub_agents=[
-        status_agent,
+    sub_agents=[       
         investigation_workflow,
         remediation_agent,
+        1
     ],
 )
