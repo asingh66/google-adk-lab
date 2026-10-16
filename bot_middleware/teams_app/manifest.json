@@ -1,0 +1,63 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.19/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.19",
+  "version": "1.0.0",
+  "id": "58a41adc-90d4-4ab6-a0bc-81c92bbed7d9",
+  "developer": {
+    "name": "Amit Singh",
+    "websiteUrl": "https://github.com/asingh66/google-adk-lab",
+    "privacyUrl": "https://github.com/asingh66/google-adk-lab",
+    "termsOfUseUrl": "https://github.com/asingh66/google-adk-lab"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Pipeline Ops",
+    "full": "Pipeline Ops Agent"
+  },
+  "description": {
+    "short": "Check, diagnose and remediate data pipelines.",
+    "full": "Ask about a data pipeline's status, investigate why it failed, or request a retry. Backed by a Google ADK multi-agent system."
+  },
+  "accentColor": "#2B5797",
+  "bots": [
+    {
+      "botId": "8a6e5b3a-a825-4f5f-b2c6-34d3452c45fa",
+      "scopes": [
+        "personal"
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": false,
+      "commandLists": [
+        {
+          "scopes": [
+            "personal"
+          ],
+          "commands": [
+            {
+              "title": "status",
+              "description": "Status of a pipeline, e.g. status of customer-orders"
+            },
+            {
+              "title": "investigate",
+              "description": "Investigate why a pipeline failed"
+            },
+            {
+              "title": "retry",
+              "description": "Request a retry of a failed pipeline"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "peaceful-chair-537k7sp-8002.use.devtunnels.ms"
+  ]
+}
