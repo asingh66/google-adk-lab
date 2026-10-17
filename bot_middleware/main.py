@@ -1,7 +1,6 @@
 from os import environ
 import logging
 
-import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
@@ -20,6 +19,8 @@ from microsoft_agents.hosting.fastapi import (
     jwt_authorization_decorator,
     start_agent_process,
 )
+
+from bot_middleware.adk_client import call_adk
 
 
 # ---------------------------------------------------------
@@ -44,14 +45,6 @@ load_dotenv()
 # ---------------------------------------------------------
 
 app = FastAPI()
-
-
-# ---------------------------------------------------------
-# Google ADK configuration
-# ---------------------------------------------------------
-
-ADK_URL = "http://127.0.0.1:8001"
-ADK_APP = "my_agent"
 
 
 # ---------------------------------------------------------
@@ -98,87 +91,6 @@ app.state.agent_configuration = (
 class ChatRequest(BaseModel):
     user_id: str
     message: str
-
-
-# ---------------------------------------------------------
-# Google ADK integration
-# ---------------------------------------------------------
-
-async def call_adk(
-    user_id: str,
-    session_id: str,
-    message: str,
-):
-    """
-    Sends a user message to the Google ADK application.
-
-    The ADK session is created automatically if it does not
-    already exist.
-    """
-
-    async with httpx.AsyncClient(timeout=60) as client:
-
-        session_url = (
-            f"{ADK_URL}/apps/{ADK_APP}"
-            f"/users/{user_id}"
-            f"/sessions/{session_id}"
-        )
-
-        # Check whether the ADK session already exists.
-        session_response = await client.get(session_url)
-
-        if session_response.status_code == 404:
-
-            create_response = await client.post(
-                session_url,
-                json={},
-            )
-
-            create_response.raise_for_status()
-
-        elif session_response.status_code != 200:
-
-            session_response.raise_for_status()
-
-        # Send the message to ADK.
-        payload = {
-            "appName": ADK_APP,
-            "userId": user_id,
-            "sessionId": session_id,
-            "newMessage": {
-                "role": "user",
-                "parts": [
-                    {
-                        "text": message
-                    }
-                ],
-            },
-        }
-
-        response = await client.post(
-            f"{ADK_URL}/run",
-            json=payload,
-        )
-
-        response.raise_for_status()
-
-    events = response.json()
-
-    # ADK may return multiple events.
-    # Walk backwards through the events and return the
-    # latest textual response.
-    for event in reversed(events):
-
-        content = event.get("content", {})
-
-        for part in content.get("parts", []):
-
-            text = part.get("text")
-
-            if text and text.strip():
-                return text
-
-    return None
 
 
 # ---------------------------------------------------------
